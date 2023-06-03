@@ -41,17 +41,19 @@ w1 = weights( num_hidden, num_outputs )
 # main training loop
 errors = []
 for i in range( 5000 ):
-    # run network
+    # forward pass
     z0 = x0 @ w0;   x1 = np.sin( z0 )
     yh = x1 @ w1
 
-    # backpropagate error
+    # backward pass
     e1 = yh - ys
-    e0 = (e1 @ w1.T) * np.cos( z0 ) # chain rule
+    e0 = (e1 @ w1.T) * np.cos( z0 )
+
+    # update weights
     w1 -= (x1.T @ e1) * learning_rate
     w0 -= (x0.T @ e0) * learning_rate  
     
-    # track total output error
+    # track error
     errors.append( np.sum( np.abs( e1 ) ) )
 
 # show plot of errors
