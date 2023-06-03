@@ -57,6 +57,7 @@ for i in range( 5000 ):
             break
 
 # show plot of errors
+print( "min error: " + str( min_error ) )
 plt.figure( 1 )
 plt.plot( errors )
 plt.plot( min_errors )
