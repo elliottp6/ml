@@ -1,7 +1,8 @@
 #!/bin/python3
 # GUIDE: https://www.youtube.com/watch?v=l-CjXFmcVzY
-# 12:12 to 15:30
+# 12:12 to 17:15
 # perceptron, trained by gradient descent
+# issues to note: vanishing or exploding graident problems (16:09) where blame is too much on initial weights or final weights
 import numpy as np
 import matplotlib.pyplot as plt
 
