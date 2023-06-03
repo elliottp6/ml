@@ -1,6 +1,7 @@
 #!/bin/python3
 # GUIDE: https://www.youtube.com/watch?v=l-CjXFmcVzY
 # 0:00 to 5:12
+# perceptron, trained by guessing weights
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -25,12 +26,12 @@ def weights( ins, outs ):
     ws = np.random.randn( ins, outs )
     return ws
 
-# compute output using weights
+# initial guessed weights
+ws = weights( ins, outs )
+
+# compute errors using weights
 errors = []
 for i in range( 5000 ):
-    # guess weights
-    ws = weights( ins, outs )
-
     # compute output
     yh = xs @ ws
 
@@ -43,6 +44,10 @@ for i in range( 5000 ):
     if e < 0.05:
         print( "found solution" )
         print( ws )
+        break
+
+    # otherwise, guess new weights
+    ws = weights( ins, outs )
 
 # show plot of errors
 plt.figure( 1 )
