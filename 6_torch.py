@@ -6,6 +6,8 @@
 # note: to verify pytorch is working do:
 #x = torch.rand( 5, 3 )
 #print( x )
+# NOTE: pytorch is slower than numpy for small networks due to higher overhead
+# BUT, for large networks, it is much faster (like, 300 hidden nodes per layer i.e. about 90K weights)
 import numpy as np
 import matplotlib.pylab as plt
 import torch
