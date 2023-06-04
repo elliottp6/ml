@@ -1,5 +1,5 @@
 #!/bin/python3
-# instlal pytorch via https://pytorch.org/get-started/locally/
+# install pytorch via https://pytorch.org/get-started/locally/
 # GUIDE: https://www.youtube.com/watch?v=l-CjXFmcVzY
 # 17:15 to 23:50
 # conclusions: nets can fir & interpolate well, but not extrapolate well

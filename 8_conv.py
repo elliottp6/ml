@@ -1,6 +1,8 @@
 #!/bin/python3
 # GUIDE: https://www.youtube.com/watch?v=l-CjXFmcVzY
-# 23:50 to 29:20
+# 29:20 to ???
+# limitations w/o convolution: words like 'cats' is position-dependent in original text, so it's just memorizing
+# convolution makes it non-position-dependent
 import numpy as np
 import matplotlib.pylab as plt
 import torch
