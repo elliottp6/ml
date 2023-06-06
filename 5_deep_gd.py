@@ -39,7 +39,7 @@ for i in range( 50000 ):
     # backward pass
     e2 = z2 - y
     e1 = (e2 @ w2.T) * np.cos( z1 )
-    e0 = (e1 @ w1.T) * np.cos( z0 )
+    e0 = (e1 @ w1.T) * np.cos( z0 ) 
 
     # update weights
     w2 -= (x2.T @ e2) * lr

@@ -1,3 +1,7 @@
+-- BACKPROPAGATION EXPLAINED--
+https://towardsdatascience.com/backpropagation-made-easy-e90a4d5ede55
+
+
 -- OPTIMIZERS --
 => SGD: issue is vanishing gradient or exploding gradient
 => ADAM: adjusts step size automatically
@@ -10,7 +14,7 @@
 => SOFTMAX: good for last layer if a vector of probabilities is desired (https://towardsdatascience.com/softmax-activation-function-how-it-actually-works-d292d335bd78). However, during training we don't need to use it, we can apply it later on instead. (Train using cross entropy loss w/ the last layer just outputting raw numbers.)
 
 example code in 7_gen.py:
-yh = model.forward( s ) ; yh = vectors of outputs (raw numbers/logits)
+yh = model.forward( s ) ; yh = vectors of outputs (numbers/logits)
 prob = F.softmax( yh, dim=0 ) ; convert values to probabilities (so we have a probability distribution)
 #pred = torch.argmax( yh ).item() ; alternatively: just take the largest logit as a character
 pred = torch.multinomial( prob, num_samples=1 ).item() ; sample from the probabilities randomly, based on each probability
@@ -20,4 +24,6 @@ pred = torch.multinomial( prob, num_samples=1 ).item() ; sample from the probabi
 
 => CROSS ENTROPY: FOR TRAINING A CLASSIFICATION VECTOR W/ PROBABILITY FOR EACH CLASSIFICATION --
 https://towardsdatascience.com/cross-entropy-loss-function-f38c4ec8643e
+note that in pytorch the inputs are predicted unnormalized logits (so we don't need to use softmax as last layer, just identity)
+the target should just be a single class index
 

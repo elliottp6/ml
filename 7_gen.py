@@ -146,11 +146,15 @@ plt.show()
 gen_text = text[0:inputs]
 s = data[0:inputs]
 for i in range( 3000 ):
-    # get next predicted letter
+    # get vector representing likeliness for each class (in this case, letters)
     yh = model.forward( s )
-    prob = F.softmax( yh, dim=0 )
+    
+    # DISABLED: convert vector into the highest likeliness letter
     #pred = torch.argmax( yh ).item()
-    pred = torch.multinomial( prob, num_samples=1 ).item()
+    
+    # ENABLED: convert vector into a letter based on a random sampling of output probabilities
+    prob = F.softmax( yh, dim=0 ) # softmax converts numbers/logits into a probability vector
+    pred = torch.multinomial( prob, num_samples=1 ).item() # this does the random sampling from the probability vector
 
     # insert predicted letter into input (like a ring buffer)
     s = torch.roll( s, -1 )
