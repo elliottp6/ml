@@ -2,54 +2,19 @@
 # GUIDE: https://www.youtube.com/watch?v=l-CjXFmcVzY
 # 29:20 to ???
 # limitations w/o convolution: words like 'cats' is position-dependent in original text, so it's just memorizing
-# convolution makes it non-position-dependent
+# convolution makes the network invariant to position, rotation & scaling
+# embedding: each character has a unique vector INSTEAD of just a single value
+#            then pass embedding into a filter: a simple linear network
+#            then move the filter, and do the same for the next letter in the context
+#            sum all the outputs and pass result into a nonlinear network => output is next letter
+#            network can learn patterns regardless of their position
 import numpy as np
 import matplotlib.pylab as plt
 import torch
 from torch.nn import functional as F
 
-# cat poem
-text = '''
-In cozy corners, where sunlight beams,
-A creature stirs, a feline it seems.
-With eyes so bright, a curious gaze,
-A whiskered friend, enchanting our days.
-
-Cats, cats, with tails that sway,
-Graceful and nimble as they play.
-Cats, cats, so soft and sly,
-With secrets hidden in each eye.
-
-Prowling in silence, oh, how they sneak,
-Through moonlit nights, their stealth they speak.
-Whiskers twitching, ears alert,
-Hunting prowess, they expertly assert.
-
-Cats, cats, with velvet paws,
-They tread with elegance, no noise, no flaws.
-Cats, cats, in shadows they dwell,
-A mystic presence, we can't quite tell.
-
-With gentle purrs, they claim their space,
-Napping on cushions or a cherished place.
-Lulled by a rhythm, soft as a breeze,
-Dreaming of mice or climbing tall trees.
-
-Cats, cats, curled in a ball,
-Snuggled and snug, they never fall.
-Cats, cats, their beauty is grand,
-The king of the home, a regal band.
-
-Yet, they're not just pets, they're family indeed,
-Caring companions, a friend in need.
-With tender mews and comforting licks,
-Love in their hearts, their spirits, like flicks.
-
-So cherish these creatures, so mystifying,
-Their enchantment, forever gratifying.
-Cats, cats, with love we adore,
-A bond unbroken, forevermore.
-'''
+# read cat poem
+with open( 'cat_poem.txt' ) as h: text = h.read().lower()
 
 # change to lowercase to reduce the # of characters
 text = text.lower()
@@ -65,7 +30,7 @@ itos = {i:ch for i,ch in enumerate( chars )}
 data = [stoi[c] for c in text]
 
 # convert data to tensor
-data = torch.tensor( data ).float()
+data = torch.tensor( data ).long() # change to LONG b/c now using data as indices for embedding table
 
 # print vocabulary size
 vocab_size = len( stoi )
@@ -76,10 +41,10 @@ inputs = 64
 hidden1 = 200
 hidden2 = 200
 outputs = vocab_size
+lr = 0.001
+num_embed = 64
+embed = torch.randn( vocab_size, num_embed ) # associate each vocabulary w/ a random vector
 
-# add bias to input??
-#xs = np.hstack( (xs, np.ones( [xs.shape[0], 1] ) ) )
-#inputs += 1
 
 # define initial weights as tensors
 params = []
@@ -91,18 +56,22 @@ def weights( ins, outs ):
 
 class Model():
     def __init__( self):
-        self.w0 = weights( inputs, hidden1 )
+        self.wv = weights( num_embed, num_embed )
+        self.w0 = weights( num_embed, hidden1 )
         self.w1 = weights( hidden1, hidden2 )
         self.w2 = weights( hidden2, outputs )
 
     def forward( self, x ):
-        x = torch.relu( x @ self.w0 )
-        x = torch.relu( x @ self.w1 )
+        x = embed[x] # lookup embedding vector for character
+        x = x @ self.wv # linear layer
+        x = torch.sum( x, dim=-2 ) # sum 
+        x = torch.relu( x @ self.w0 ) # nonlinear layer
+        x = torch.relu( x @ self.w1 ) # nonlinear layer
         return x @ self.w2
 
 # create the model & the optimizer
 model = Model()
-optimizer = torch.optim.Adam( params, 0.001 )
+optimizer = torch.optim.Adam( params, lr )
 
 # main training loop
 errors = []
