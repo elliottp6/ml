@@ -1,6 +1,5 @@
 -- BACKPROPAGATION EXPLAINED--
-https://towardsdatascience.com/backpropagation-made-easy-e90a4d5ede55
-
+=> see comments in 5_deep_gd.py, which makes backpropagation trivial using chain rule
 
 -- OPTIMIZERS --
 => SGD: issue is vanishing gradient or exploding gradient

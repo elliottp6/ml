@@ -32,19 +32,20 @@ w2 = weights( num_hidden2, num_outputs )
 errors = []
 for i in range( 50000 ):
     # forward pass
-    z0 = x0 @ w0;   x1 = np.sin( z0 )
-    z1 = x1 @ w1;   x2 = np.sin( z1 )
-    z2 = x2 @ w2
+    z0 = x0 @ w0;   x1 = np.sin( z0 )   # sine transform, derivative = (∂x1/∂z0) = cos(z0)
+    z1 = x1 @ w1;   x2 = np.sin( z1 )   # sine transform, derivative = (∂x2/∂z1) = cos(z1)
+    z2 = x2 @ w2;   x3 = z2             # identity transform, derivative = (∂x3/∂z2) = 1
 
-    # backward pass
-    e2 = z2 - y
-    e1 = (e2 @ w2.T) * np.cos( z1 )
-    e0 = (e1 @ w1.T) * np.cos( z0 ) 
+    # backward pass via chain rule: f(g(x))' = f'(g(x))g'(x)
+    C = x3 - y                      # C, cost function, note that derivative of cost (∂C/∂x3) = 1
+    e2 = C * 1 * 1                  # e2, units (∂C/∂z2) = C        * (∂C/∂x3)  * (∂x3/∂z2) = C * 1 * 1
+    e1 = (e2 @ w2.T) * np.cos( z1 ) # e1, units (∂C/∂z1) = (∂C/∂z2) * (∂z2/∂x2) * (∂x2/∂z1) = e2 * w2 * cos(z1)
+    e0 = (e1 @ w1.T) * np.cos( z0 ) # e0, units (∂C/∂z0) = (∂C/∂z1) * (∂z1/∂x1) * (∂x1/∂z0) = e1 * w1 * cos(z0)
 
     # update weights
-    w2 -= (x2.T @ e2) * lr
-    w1 -= (x1.T @ e1) * lr
-    w0 -= (x0.T @ e0) * lr  
+    w2 -= (x2.T @ e2) * lr          # w2, units (∂C/∂w2) = (∂C/∂z2) * (∂z2/∂w2) = e2 * x2
+    w1 -= (x1.T @ e1) * lr          # w1, units (∂C/∂w1) = (∂C/∂z1) * (∂z1/∂w1) = e1 * x1
+    w0 -= (x0.T @ e0) * lr          # w0, units (∂C/∂w0) = (∂C/∂z0) * (∂z0/∂w0) = e0 * x0
     
     # track error
     errors.append( np.sum( np.abs( e2 ) ) )
