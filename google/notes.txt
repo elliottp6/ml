@@ -1,0 +1,80 @@
+-- Validation Set --
+https://developers.google.com/machine-learning/crash-course/validation/check-your-intuition
+training set: for model fitting
+validation set: check results, and iterate hyperparameters
+test sets: final confirmation
+
+-- Representation --
+https://developers.google.com/machine-learning/crash-course/representation/video-lecture
+75% of time spent on "feature engineering", which is preparing inputs to model
+(1) natural real values => natural real values
+(2) string => translate into a feature vector by using a "one-hot encoding"
+              has unique coefficient for each possible string we might see
+              example: "tree": [0, 1, 0], "bark": [0, 0, 1], "friend": [1, 0, 0]
+              dont' worry: there's a way to represent this more compactly
+(3) no magic values: don't use "-1" to show a feature doesn't exist. Instead, having a separate boolean 0.0 or 1.0
+(4) features should not have extreme outliers: may want to just remove them?
+(5) BINNING trick: instead of real value feature, may create histogram bins from them, then use one-hot encoding
+                   why? map nonlinearities into model w/o any special tricks
+                   this lets there be multiple weights rather than a linear relationship in input to output
+                   binning by quantile is easy and ensures there's always enough samples in each quantile
+(6) ML is NOT a black box. NEED TO UNDERSTAND TRAINING DATA.
+(7) Categorical features: example: 4 possible street names, can map to integers 0, 1, 2, 3, and then use 4 for all unseen streets
+    problem: we're learning a single neural weight that applies to all streets, but need one for each
+    one-hot encoding: [0,0,0,0,1]
+    multi-hot encoidng: [0,1,0,0,1]
+    in other words, just make every street into a boolean
+    this is inefficient, so we might want a sparse representation of the one-hot encoding via an EMBEDDING LAYER
+    
+-- Feature Cross (synthetic feature) --
+https://developers.google.com/machine-learning/crash-course/feature-crosses/video-lecture
+example: housing market prediction: latitude X num_bedrooms or tic-tac-toe with pos1 X pos2 X pos3
+why? might want to take non-linear problem but map it to a linear learner
+
+****TODO: how to bucketize data in keras?
+https://colab.research.google.com/github/google/eng-edu/blob/main/ml/cc/exercises/representation_with_a_feature_cross.ipynb?utm_source=mlcc&utm_campaign=colab-external&utm_medium=referral&utm_content=representation_tf2-colab&hl=en
+
+--Regularization: simplicity to prevent overfitting--
+Sometimes loss on training data continues to trend down, but goes up on validation data: we're overfit!
+Structural risk minimization: minimize[ Loss( Data|Model ) + λ( w0^2 + w1^2 + w2^2 ... ) ] where ( w0^2 + w1^2 + w2^2 ... ) is square of L₂ norm; λ is a constant hyperparameter
+=> Prefer smaller weights: if any weights are too big, it's a sign that we're overfit
+   L₂ regularization (aka ridge regularization)
+   complexity( Model ) = sum-of-squared-of-weights
+   for linear models: prefers flatter slopes
+   bayesian prior: weights should be centered around zero and normally distributed
+
+--Logistic Regression: predicting a probability--
+https://developers.google.com/machine-learning/crash-course/logistic-regression/video-lecture
+Sigmoid activation function: naturally forces real values to between 0 and 1
+Loss function: LogLoss domain 0, 1, range 0, inf (asymptote)
+               Shape of LogLoss gives extreme loss when on opposites (i.e. 1 when expected 0), but otherwise moderate loss)
+Regularization is key, or else too much focus on driving losses to zero & weights go out-of-bounds
+
+--Classification--
+if we do logistic regression, we may get output that something is "80% likely to be spam".
+    (0) classification threshold: is 80% enough? or 70%? or 90%? {see ROC curve below @ #7}
+    (1) accuracy: the fraction of predictions we got correct
+    (2) but, accuracy breaks down when we have "class imbalance": i.e. when "true" or "false" is rare
+    (3) Separate out errors: True Positive, False Positive, False Negative, True Negative
+    (4) Precision: when model says "true", how often was it correct? Conversely, when it said "false", how often was it correct?
+                   i.e. (True Positives) / (All Positive Predictions)
+                   intuition: did the model cry "wolf" too often?
+    (5) Recall: (True Positives) / (All Actual Positives)
+                instuitive: did the model miss any wolves?
+    (6) note that precision & recall are often in tension. 
+    (7) ROC curve: measures perf of model against all possible classifcation thresholds
+            plots points (True Positive rate, False Positive rate) for each decision threshold
+            area under curve: "if we pick a random positive & negative, whats probability model scores positive higher than negative?"
+    (8) **prediction bias TODO: need to finish & understand this better
+        if average-of-predictions == average-of-observations: bias is zero, which is good
+        otherwise, there's bias, which is a problem: incomplete feature set, buggy pipeline, biased training sample?
+            don't fix bias in calibration layer, fix it in the model
+            look for bias in slices of data to guide improvements via Calibration Scatter Plot
+            
+            
+        
+                   
+
+
+
+
