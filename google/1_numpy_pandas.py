@@ -3,8 +3,7 @@
 import numpy as np
 import pandas as pd
 
-# --NUMPY ULTRAQUICK TUTORIAL -- https://colab.research.google.com/github/google/eng-edu/blob/main/ml/cc/exercises/numpy_ultraquick_tutorial.ipynb?utm_source=mlcc&utm_campaign=colab-external&utm_medium=referral&utm_content=numpy_tf2-colab&hl=en
-# cheat sheet
+# --NUMPY --
 one_dimensional_array = np.array( [1.2, 2.4, 3.5, 4.7, 6.1, 7.2, 8.3, 9.5] )
 two_dimensional_array = np.array( [[6, 5], [11, 7], [4, 8]] )
 ones = np.ones( 3 )
@@ -23,7 +22,7 @@ label = (feature * 3) + 4
 noise = np.random.random( [len(feature)] )
 label = label + noise * 4 - 2 # note that '+=' cannot change the dtype (datatype) of an array, and we're converting to a float array here
 
-# -- PANDAS ULTRAQUICK TUTORIAL -- https://colab.research.google.com/github/google/eng-edu/blob/main/ml/cc/exercises/pandas_dataframe_ultraquick_tutorial.ipynb?utm_source=mlcc&utm_campaign=colab-external&utm_medium=referral&utm_content=pandas_tf2-colab&hl=en#scrollTo=ZmL0l551Iibq
+# -- PANDAS --
 data = np.array( [[0, 3], [10, 7], [20, 9], [30, 14], [40, 15]] ) # 5x2 numpy array
 columns = ['temperature', 'activity']
 df = pd.DataFrame( data = data, columns = columns )
