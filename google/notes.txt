@@ -71,10 +71,14 @@ if we do logistic regression, we may get output that something is "80% likely to
             don't fix bias in calibration layer, fix it in the model
             look for bias in slices of data to guide improvements via Calibration Scatter Plot
             
-            
-        
-                   
+--L₁ regularization--
+=> recall that L₂ regulaization penalizes weight², with derivative 2*weight
+=> L₁ penalizes |weight|, with derivative k (a constant)
+=> hence, while L₂ shrinks but never reaches zero, L₁ moves towards zero itself (it is clamped to prevent crossing zero line)
+=> 
 
+-- Intro to Neural Nets --
+(see 3_net.py)
 
 
 
