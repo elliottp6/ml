@@ -90,7 +90,7 @@ def plot_the_loss_curve( epochs, mse_training, mse_validation ):
     plt.show()  
 
 # simple linear models are a good baseline before creating a deep neural net
-def create_linear_model( inputs, outputs, learning_rate ):
+def create_model( inputs, outputs, learning_rate ):
     # create the model
     model = tf.keras.Model( inputs = inputs, outputs = outputs )
     
@@ -101,7 +101,7 @@ def create_linear_model( inputs, outputs, learning_rate ):
         metrics = [tf.keras.metrics.MeanSquaredError()] )
     return model
 
-def train_linear_model( model, dataset, epochs, batch_size, label_name, validation_split = 0.1 ):
+def train_model( model, dataset, epochs, batch_size, label_name, validation_split = 0.1 ):
     """Feed a dataset into the model in order to train it."""
 
     # Split the dataset into features and label.
@@ -116,13 +116,29 @@ def train_linear_model( model, dataset, epochs, batch_size, label_name, validati
     mse = hist["mean_squared_error"]
     return epochs, mse, history.history
 
-#@title Define linear regression model outputs
+# define linear regression model outputs
 def get_outputs_linear_regression():
     # Create the Dense output layer.
-    dense_output = tf.keras.layers.Dense( units=1, input_shape=(1,), name='dense_output' )(preprocessing_layers)
+    dense_output = tf.keras.layers.Dense( units=1, input_shape=(1,),
+                                          name='dense_output' )(preprocessing_layers)
 
     # Define an output dictionary we'll send to the model constructor.
     outputs = { 'dense_output': dense_output }
+    return outputs
+
+# define dense neural network model outputs
+def get_outputs_dnn():
+    # create a dense layer with 10 nodes
+    dense_output = tf.keras.layers.Dense( units=10, input_shape=(1,), activation='relu',
+                                          name='hidden_dense_layer_1' )(preprocessing_layers)
+    # create a dense layer with 6 nodes
+    dense_output = tf.keras.layers.Dense( units=5, input_shape=(1,), activation='relu',
+                                          name='hidden_dense_layer_2' )(dense_output)
+    # create the dense output layer
+    dense_output = tf.keras.layers.Dense( units=1, input_shape=(1,), name='dense_output' )(dense_output)
+
+    # define an output dictionary we'll send to the model constructor
+    outputs = {'dense_output': dense_output}
     return outputs
 
 # normalize the house values
@@ -133,23 +149,24 @@ test_median_house_value_normalized.adapt( np.array( test_df['median_house_value'
 
 # The following variables are the hyperparameters.
 learning_rate = 0.01
-epochs = 15
+epochs = 20
 batch_size = 1000
 label_name = "median_house_value"
 
-# Split the original training set into a reduced training set and a validation set. 
+# Split the original training set into a reduced training set and a validation set.
+linear = False
 validation_split = 0.2
-outputs = get_outputs_linear_regression()
+outputs = get_outputs_linear_regression() if linear else get_outputs_dnn()
 
 # Establish the model's topography.
-my_model = create_linear_model( inputs, outputs, learning_rate )
+model = create_model( inputs, outputs, learning_rate )
 
 # Train the model on the normalized training set.
-epochs, mse, history = train_linear_model( my_model, train_df, epochs, batch_size, label_name, validation_split )
+epochs, mse, history = train_model( model, train_df, epochs, batch_size, label_name, validation_split )
 plot_the_loss_curve( epochs, mse, history["val_mean_squared_error"] )
 
 test_features = {name:np.array(value) for name, value in test_df.items()}
-test_label = test_median_house_value_normalized( test_features.pop(label_name) ) # isolate the label
+test_label = test_median_house_value_normalized( test_features.pop( label_name ) ) # isolate the label
 print( "\n Evaluate the linear regression model against the test set:" )
-my_model.evaluate( x = test_features, y = test_label, batch_size=batch_size, return_dict = True )
+model.evaluate( x = test_features, y = test_label, batch_size = batch_size, return_dict = True )
 
